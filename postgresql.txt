@@ -37,6 +37,15 @@ cd /10/main
 vi postgresql.conf // 로컬호스트 부분 * -> 모두 접속으로 변경 
 vi pg_hba.conf // 0.0.0.0/0 -> 모든 아이피 허용 
 
+sudo - su postgresql
+
+psql
+alter user postgres with password '1234';
+\q
+exit
+
+
+
 서비스 재시작
 sudo service postgresql restart
 sudo service postgresql stop
@@ -51,6 +60,34 @@ USERNAME postgres
 PASSWORD 1234
 
 
+SELECT 
+	user_id,
+	CASE register_device 
+	WHEN register_device = 1 THEN '데스크톱'
+	WHEN register_device = 2 THEN '스마트폰'
+	WHEN register_device = 3 THEN '애플리케이션'
+	else '값이 없습니다'
+	end as DEVICE_NAME
+FROM mst_users mu ;
+
+특수문자 읽는법 
+https://jdm.kr/blog/87
+
+정규표현식 참조 
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/%EC%A0%95%EA%B7%9C%EC%8B%9D
+https://hamait.tistory.com/342
+
+select 
+	stamp ,
+	substring(referrer from 'http[s]?://([^/]*)') as referrer_host
+from access_log al ;
+
+select 
+	stamp ,
+	url ,
+	substring(url from '//[^/]+([^?#]+)') as path,
+	substring(url from 'id=([^&]*)') as path
+from access_log al ;
 
 
 
