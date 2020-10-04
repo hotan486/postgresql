@@ -1,0 +1,206 @@
+7강 - 발표 준비 
+
+Apache Zeppelin -> 분석및 시각화 툴 
+jupyter notebook -> 파이썬 언어 
+spark notebook -> 스칼라 언어 
+
+==========================
+하나의 테이블에 대한 조작
+==========================
+
+테이블에 대한 전체 특징 파악을 목적 
+
+----------------------------------------
+데이터 집약 
+----------------------------------------
+
+집약합수를 통해 집계 하고 평균 구하는 과정 
+
+----------------------------------------
+데이터 가공 
+----------------------------------------
+
+집계가 어려운 경우 가공하는 방법 
+
+
+==========================
+1. 그룹 의 특징 잡기 
+==========================
+
+집합 함수사용하여 데이터 집약하는 방법 
+
+카운터 (count) - 총 레코드 수 반환 
+썸 (sun) - 총 값의 합을 반환 
+
+상품 평가(review) 테이블엔
+각각의 상품(product_id)에 대한 점수(score)가 들어가 있다고 가정하면
+단, 상품은 중복 되어 있다
+
+DROP TABLE IF EXISTS review;
+CREATE TABLE review (
+    user_id    varchar(255)
+  , product_id varchar(255)
+  , score      numeric
+);
+
+INSERT INTO review
+VALUES
+    ('U001', 'A001', 4.0)
+  , ('U001', 'A002', 5.0)
+  , ('U001', 'A003', 5.0)
+  , ('U002', 'A001', 3.0)
+  , ('U002', 'A002', 3.0)
+  , ('U002', 'A003', 4.0)
+  , ('U003', 'A001', 5.0)
+  , ('U003', 'A002', 4.0)
+  , ('U003', 'A003', 4.0)
+;
+
+*책에서 제공하는 데이터 셋 
+
+----------------------------------------
+테이블 전체의 특징량 계산하기
+----------------------------------------
+
+집합 함수사용하여 
+데이터 집약 
+
+select 
+count(*) as total_count
+,count(distinct user_id) as user_count
+,count(distinct product_id ) as product_count
+,sum(score) as sum -- 합
+,avg(score ) as avg -- 평균
+,max(score ) as max -- 최대값
+,min(score ) as min -- 최소값
+from review r ;
+
+total_count|user_count|product_count|sum |avg               |max|min|
+-----------|----------|-------------|----|------------------|---|---|
+          9|         3|            3|37.0|4.1111111111111111|5.0|3.0|
+
+----------------------------------------
+구룹된 데이터의 특징량 계산하기
+----------------------------------------
+
+데이터 셋 동일 
+user_id 를 통해 구룹하여 데이터 집계 
+
+select 
+user_id 
+,count(*) as total_count
+,count(distinct user_id) as user_count
+,count(distinct product_id ) as product_count
+,sum(score) as sum --합
+,avg(score ) as avg -- 평균
+,max(score ) as max -- 최대값
+,min(score ) as min -- 최소값
+from review  
+group by user_id ;
+
+user_id|total_count|user_count|product_count|sum |avg               |max|min|
+-------|-----------|----------|-------------|----|------------------|---|---|
+U001   |          3|         1|            3|14.0|4.6666666666666667|5.0|4.0|
+U002   |          3|         1|            3|10.0|3.3333333333333333|4.0|3.0|
+U003   |          3|         1|            3|13.0|4.3333333333333333|5.0|4.0|
+
+----------------------------------------
+집약함수를 적용한 값과 집약 전의 값을 동시에 다루기
+----------------------------------------
+
+select 
+user_id 
+,product_id
+,score
+,avg(score ) over() as avg_score
+,avg(score ) over(partition by user_id) as user_avg_score
+,score - avg(score ) over(partition by user_id) as user_avg_score_diff
+from review;
+
+user_id|product_id|score|avg_score         |user_avg_score    |user_avg_score_diff|
+-------|----------|-----|------------------|------------------|-------------------|
+U001   |A001      |  4.0|4.1111111111111111|4.6666666666666667|-0.6666666666666667|
+U001   |A002      |  5.0|4.1111111111111111|4.6666666666666667| 0.3333333333333333|
+U001   |A003      |  5.0|4.1111111111111111|4.6666666666666667| 0.3333333333333333|
+U002   |A001      |  3.0|4.1111111111111111|3.3333333333333333|-0.3333333333333333|
+U002   |A002      |  3.0|4.1111111111111111|3.3333333333333333|-0.3333333333333333|
+U002   |A003      |  4.0|4.1111111111111111|3.3333333333333333| 0.6666666666666667|
+U003   |A001      |  5.0|4.1111111111111111|4.3333333333333333| 0.6666666666666667|
+U003   |A002      |  4.0|4.1111111111111111|4.3333333333333333|-0.3333333333333333|
+U003   |A003      |  4.0|4.1111111111111111|4.3333333333333333|-0.3333333333333333|
+
+over() 구룹 없이 집계 가능 
+partition by user_id - 인자로 받을시 해당 데이터를 기준으로 집계 
+
+==========================
+2. 그룹 내부 순서
+==========================
+
+인기 상품 테이블로 
+순위 작성, 순서를 고려한 실행 방법 
+ 
+DROP TABLE IF EXISTS popular_products;
+CREATE TABLE popular_products (
+    product_id varchar(255)
+  , category   varchar(255)
+  , score      numeric
+);
+
+INSERT INTO popular_products
+VALUES
+    ('A001', 'action', 94)
+  , ('A002', 'action', 81)
+  , ('A003', 'action', 78)
+  , ('A004', 'action', 64)
+  , ('D001', 'drama' , 90)
+  , ('D002', 'drama' , 82)
+  , ('D003', 'drama' , 78)
+  , ('D004', 'drama' , 58)
+;
+
+----------------------------------------
+order by 구문으로 순서 정의하기
+----------------------------------------
+
+SELECT 
+product_id  
+,score
+,row_number() over(order by score desc) as row
+,rank() over(order by score desc) as rank
+,dense_rank() over(order by score desc) as dense_rank
+,lag(product_id) over (order by score desc) as lag1
+,lag(product_id,2) over (order by score desc) as lag2
+,lead(product_id) over (order by score desc) as lead1
+,lead(product_id,2) over (order by score desc) as lead2
+FROM information_schema.popular_products
+order by row ;
+
+
+product_id|score|row|rank|dense_rank|lag1|lag2|lead1|lead2|
+----------|-----|---|----|----------|----|----|-----|-----|
+A001      |   94|  1|   1|         1|    |    |D001 |D002 |
+D001      |   90|  2|   2|         2|A001|    |D002 |A002 |
+D002      |   82|  3|   3|         3|D001|A001|A002 |A003 |
+A002      |   81|  4|   4|         4|D002|D001|A003 |D003 |
+A003      |   78|  5|   5|         5|A002|D002|D003 |A004 |
+D003      |   78|  6|   5|         5|A003|A002|A004 |D004 |
+A004      |   64|  7|   7|         6|D003|A003|D004 |     |
+D004      |   58|  8|   8|         7|A004|D003|     |     |
+
+row_number - 유일한 순서를 붙임 동일한 경우 원래 순서를 가는 듯 
+rank - 순위를 정의 같을 경우 동일하고 뒤 순위는 사라짐 
+dense_rank - 순위를 정의 같을 경우 동일하고 뒤 순위는 다음부터 이어짐
+lag - 앞 행의 값을 
+lead - 뒤의 행의 값을 리턴 
+
+----------------------------------------
+order by 구문과 집약함수 조합하기
+----------------------------------------
+
+
+
+
+
+
+
+
