@@ -1,5 +1,6 @@
 7강 - 발표 준비 
 
+https://github.com/HeoYoon/SQL-study - 스터디 공유 저장소
 Apache Zeppelin -> 분석및 시각화 툴 
 jupyter notebook -> 파이썬 언어 
 spark notebook -> 스칼라 언어 
@@ -158,6 +159,17 @@ VALUES
   , ('D004', 'drama' , 58)
 ;
 
+product_id|category|score|
+----------|--------|-----|
+A001      |action  |   94|
+A002      |action  |   81|
+A003      |action  |   78|
+A004      |action  |   64|
+D001      |drama   |   90|
+D002      |drama   |   82|
+D003      |drama   |   78|
+D004      |drama   |   58|
+
 ----------------------------------------
 order by 구문으로 순서 정의하기
 ----------------------------------------
@@ -197,10 +209,97 @@ lead - 뒤의 행의 값을 리턴
 order by 구문과 집약함수 조합하기
 ----------------------------------------
 
+- ROWS : 물리적인 ROW 단위로 행 집합을 지정한다.
+- RANGE : 논리적인 상대번지로 행 집합을 지정한다.
+- BETWEEN ~ AND 절 : 윈도우의 시작과 끝 위치를 지정한다.
+- UNBOUNDED PRECEDING : PARTITION의 첫 번째 로우에서 윈도우가 시작한다.
+- UNBOUNDED FOLLOWING : PARTITION의 마지막 로우에서 윈도우가 시작한다.
+- CURRENT ROW : 윈도우의 시작이나 끝 위치가 현재 로우 이다.
 
 
+SELECT 
+ product_id 
+ ,score 
+ ,row_number() over(order by score desc) as row 
+ ,SUM(score) over(order by score desc rows between unbounded preceding and current ROW) as CUM_SCORE
+ ,avg(score) over(order by score desc rows between 1 preceding  and 1 following) as local_avg 
+ ,first_value(product_id) over(order by score desc rows between unbounded preceding  and unbounded following) as first_value
+ ,last_value(product_id) over(order by score desc rows between unbounded preceding  and unbounded following) as last_value 
+FROM information_schema.popular_products
+order by row
+ ;
 
+product_id|score|row|cum_score|local_avg          |first_value|last_value|
+----------|-----|---|---------|-------------------|-----------|----------|
+A001      |   94|  1|       94|92.0000000000000000|A001       |D004      |
+D001      |   90|  2|      184|88.6666666666666667|A001       |D004      |
+D002      |   82|  3|      266|84.3333333333333333|A001       |D004      |
+A002      |   81|  4|      347|80.3333333333333333|A001       |D004      |
+A003      |   78|  5|      425|79.0000000000000000|A001       |D004      |
+D003      |   78|  6|      503|73.3333333333333333|A001       |D004      |
+A004      |   64|  7|      567|66.6666666666666667|A001       |D004      |
+D004      |   58|  8|      625|61.0000000000000000|A001       |D004      |
 
+프레임 지정 (범위 지정)
+rows between "" and ""
 
+unbounded preceding - 이전 행 전부 
+current ROW - 현재 행
+1 preceding - 1전행 
+1 following - 1후행 
+unbounded following - 이후 행 전부 
+
+----------------------------------------
+
+SELECT 
+ product_id 
+ ,score 
+ ,row_number() over(order by score desc) as row 
+ ,array_agg(product_id) over(order by score desc rows between unbounded preceding and unbounded following) as whole_agg  
+ ,array_agg(product_id) over(order by score desc rows between unbounded preceding and current ROW) as cum_agg
+ ,array_agg(product_id) over(order by score desc rows between 1 preceding  and 1 following) as local_avg
+FROM information_schema.popular_products
+where category = 'action'
+order by row
+ ;
+
+product_id|score|row|whole_agg            |cum_agg              |local_avg       |
+----------|-----|---|---------------------|---------------------|----------------|
+A001      |   94|  1|{A001,A002,A003,A004}|{A001}               |{A001,A002}     |
+A002      |   81|  2|{A001,A002,A003,A004}|{A001,A002}          |{A001,A002,A003}|
+A003      |   78|  3|{A001,A002,A003,A004}|{A001,A002,A003}     |{A002,A003,A004}|
+A004      |   64|  4|{A001,A002,A003,A004}|{A001,A002,A003,A004}|{A003,A004}     |
+
+array_agg - 해당 하는 아이디 리스트 반환
+
+----------------------------------------
+partition by 와 order by 조합하기
+----------------------------------------
+
+SELECT 
+ category 
+ ,product_id 
+ ,score 
+ ,row_number() over(partition by category order by score desc) as row 
+ ,rank() over(partition by category order by score desc) as rank1  
+ ,dense_rank() over(partition by category order by score desc) as dense_rank1
+FROM information_schema.popular_products
+order by category, row
+ ;
+
+partition by category 카타고리를 기준으로 
+order by score desc 점수를 내림차순을 순서로 보여줌
+오름차순(ASC)이나 내림차순(DESC)
+
+category|product_id|score|row|rank1|dense_rank1|
+--------|----------|-----|---|-----|-----------|
+action  |A001      |   94|  1|    1|          1|
+action  |A002      |   81|  2|    2|          2|
+action  |A003      |   78|  3|    3|          3|
+action  |A004      |   64|  4|    4|          4|
+drama   |D001      |   90|  1|    1|          1|
+drama   |D002      |   82|  2|    2|          2|
+drama   |D003      |   78|  3|    3|          3|
+drama   |D004      |   58|  4|    4|          4|
 
 

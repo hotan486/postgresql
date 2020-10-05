@@ -55,6 +55,9 @@ sudo service postgresql stop
 postgresql 포트포워딩 
 내부 localhost 5432 -> 외부 13.125.214.70 52803
 
+//부팅시 자동 시작되게 설정
+sudo systemctl enable postgresql
+
 DB TOOL INFO 
 HOST 13.125.214.70
 PORT 52803
