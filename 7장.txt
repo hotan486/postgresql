@@ -642,3 +642,24 @@ purchase_id|product_ids   |idx|part1|
      100003|A001          |  1|A001 |
 
 
+select 
+ purchase_id 
+ ,split_part(l.product_ids,',',p.idx) as part1
+from purchase_log as l
+join (
+	select 1 as idx
+	union all select 2 as idx
+	union all select 3 as idx
+)as p
+on p.idx <= 1+char_length(l.product_ids)- char_length(replace(l.product_ids,',',''))
+-- 123 -- 12  -- 1
+;
+
+purchase_id|part1|
+-----------|-----|
+     100001|A001 |
+     100001|A002 |
+     100001|A003 |
+     100002|D001 |
+     100002|D002 |
+     100003|A001 |
