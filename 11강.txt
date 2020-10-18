@@ -1,122 +1,123 @@
 
 # 11강 사용자 전체의 특징과 경향 찾기 
 
-select * from mst_users; //사용자 마스터 테이블
+	select * from mst_users; //사용자 마스터 테이블
 
-user_id         유저 아이디
-sex             성별
-birth_date      생일
-register_date   등록단말기
-register_device 등록단말기
-withdraw_date   탈퇴일
+	user_id         유저 아이디
+	sex             성별
+	birth_date      생일
+	register_date   등록단말기
+	register_device 등록단말기
+	withdraw_date   탈퇴일
 
-user_id|sex|birth_date|register_date|register_device|withdraw_date|
--------|---|----------|-------------|---------------|-------------|
-U001   |M  |1977-06-17|2016-10-01   |pc             |             |
-U002   |F  |1953-06-12|2016-10-01   |sp             |2016-10-10   |
-U003   |M  |1965-01-06|2016-10-01   |pc             |             |
-U004   |F  |1954-05-21|2016-10-05   |pc             |             |
-U005   |M  |1987-11-23|2016-10-05   |sp             |             |
-U006   |F  |1950-01-21|2016-10-10   |pc             |2016-10-10   |
-U007   |F  |1950-07-18|2016-10-10   |app            |             |
-U008   |F  |2006-12-09|2016-10-10   |sp             |             |
-U009   |M  |2004-10-23|2016-10-15   |pc             |             |
-U010   |F  |1987-03-18|2016-10-16   |pc             |             |
+	user_id|sex|birth_date|register_date|register_device|withdraw_date|
+	-------|---|----------|-------------|---------------|-------------|
+	U001   |M  |1977-06-17|2016-10-01   |pc             |             |
+	U002   |F  |1953-06-12|2016-10-01   |sp             |2016-10-10   |
+	U003   |M  |1965-01-06|2016-10-01   |pc             |             |
+	U004   |F  |1954-05-21|2016-10-05   |pc             |             |
+	U005   |M  |1987-11-23|2016-10-05   |sp             |             |
+	U006   |F  |1950-01-21|2016-10-10   |pc             |2016-10-10   |
+	U007   |F  |1950-07-18|2016-10-10   |app            |             |
+	U008   |F  |2006-12-09|2016-10-10   |sp             |             |
+	U009   |M  |2004-10-23|2016-10-15   |pc             |             |
+	U010   |F  |1987-03-18|2016-10-16   |pc             |             |
 
-select * from action_log; //액션 로그 테이블
+	select * from action_log; //액션 로그 테이블
 
-user_id  유저 아이디
-session  
-action   view     페이지 열람
-         favorite 관심 상품 등록 
-         add_cart 카트 추가
-         purchase 구매
-         review   리뷰
-category 행동 카타고리
-products 행동 상품 
-amount   구매 금액
-stamp    구매 시점 
+	user_id  유저 아이디
+	session  
+	action   view     페이지 열람
+			favorite 관심 상품 등록 
+			add_cart 카트 추가
+			purchase 구매
+			review   리뷰
+	category 행동 카타고리
+	products 행동 상품 
+	amount   구매 금액
+	stamp    구매 시점 
 
-session |user_id|action  |category|products |amount|stamp              |
---------|-------|--------|--------|---------|------|-------------------|
-989004ea|U001   |purchase|drama   |D001,D002|  2000|2016-11-03 18:10:00|
-989004ea|U001   |view    |        |         |      |2016-11-03 18:00:00|
-989004ea|U001   |favorite|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |review  |drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
-989004ea|U001   |add_cart|drama   |D002     |      |2016-11-03 18:01:00|
-989004ea|U001   |add_cart|drama   |D001,D002|      |2016-11-03 18:02:00|
-989004ea|U001   |purchase|drama   |D001,D002|  2000|2016-11-03 18:10:00|
-47db0370|U002   |add_cart|drama   |D001     |      |2016-11-03 19:00:00|
-47db0370|U002   |purchase|drama   |D001     |  1000|2016-11-03 20:00:00|
-47db0370|U002   |add_cart|drama   |D002     |      |2016-11-03 20:30:00|
-87b5725f|U001   |add_cart|action  |A004     |      |2016-11-04 12:00:00|
-87b5725f|U001   |add_cart|action  |A005     |      |2016-11-04 12:00:00|
-87b5725f|U001   |add_cart|action  |A006     |      |2016-11-04 12:00:00|
-9afaf87c|U002   |purchase|drama   |D002     |  1000|2016-11-04 13:00:00|
-9afaf87c|U001   |purchase|action  |A005,A006|  1000|2016-11-04 15:00:00|
+	session |user_id|action  |category|products |amount|stamp              |
+	--------|-------|--------|--------|---------|------|-------------------|
+	989004ea|U001   |purchase|drama   |D001,D002|  2000|2016-11-03 18:10:00|
+	989004ea|U001   |view    |        |         |      |2016-11-03 18:00:00|
+	989004ea|U001   |favorite|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |review  |drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D001     |      |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|drama   |D002     |      |2016-11-03 18:01:00|
+	989004ea|U001   |add_cart|drama   |D001,D002|      |2016-11-03 18:02:00|
+	989004ea|U001   |purchase|drama   |D001,D002|  2000|2016-11-03 18:10:00|
+	47db0370|U002   |add_cart|drama   |D001     |      |2016-11-03 19:00:00|
+	47db0370|U002   |purchase|drama   |D001     |  1000|2016-11-03 20:00:00|
+	47db0370|U002   |add_cart|drama   |D002     |      |2016-11-03 20:30:00|
+	87b5725f|U001   |add_cart|action  |A004     |      |2016-11-04 12:00:00|
+	87b5725f|U001   |add_cart|action  |A005     |      |2016-11-04 12:00:00|
+	87b5725f|U001   |add_cart|action  |A006     |      |2016-11-04 12:00:00|
+	9afaf87c|U002   |purchase|drama   |D002     |  1000|2016-11-04 13:00:00|
+	9afaf87c|U001   |purchase|action  |A005,A006|  1000|2016-11-04 15:00:00|
 
 
 
 
 ## 1. 사용자의 액션 수 집계하기 
 
-해당 집계는 
-    사용자의 행동 패턴을 파악할때 
-    어떤 대책의 효과를 확인 할떄 
-자주사용합니다
+	해당 집계는 
+		사용자의 행동 패턴을 파악할때 
+		어떤 대책의 효과를 확인 할떄 
+	자주사용합니다
 
 
-### 액션과 관련된 지표 집계하기
+	### 액션과 관련된 지표 집계하기
 
-특정 액션을 전체액션으로 나눈것을 `사용률(usage_rate)`
-이를 이용하면 특정액션을 자주사용하는지 알수 있습니다
+	특정 액션을 전체액션으로 나눈것을 `사용률(usage_rate)`
+	이를 이용하면 특정액션을 자주사용하는지 알수 있습니다
 
-추가로 사용자가 액션을 몇번 사용하였는지 `1명당 액션수(count_per_user)`
-
-
-
+	추가로 사용자가 액션을 몇번 사용하였는지 `1명당 액션수(count_per_user)`
 
 
 
-with
-stats as(
-	-- 로그 전체의 유니크 사용자 수 구하기
-	-- 액션을 사용한 사용자 전체 (session 기준) 유저 2명 셰션 4
-	select count(distinct session1) as total_uu
-	from action_log 
-)
-select 
-	action 
-	-- 액션 uu 해당액션의 실 사용자수
-	,count(distinct session1) as action_uu
-	-- 액션의 수 전체의 액션수 
-	,count(1) as action_log 
-	-- 사용자 전체 uu	
-	,s.total_uu
-	-- 사용률 = 사용자 액션 uu / 전체 uu
-	-- 액션이 4개인데 
-	,100.0 * count(distinct session1)/s.total_uu as usage_rate
-	-- 1인당 액션수: 전체 액션수 / 사용자 액션 uu
-	-- 전체가 12개 인데 3명이 액션을 취했다면 1명이 대충 4번은 눌렀다는 소리네  
-	,1.0 * count(1) / count(distinct session1) as count_per_user
-from action_log, stats as s  	
-group by action, s.total_uu
 
 
-action  |action_uu|action_log|total_uu|usage_rate         |count_per_user        |
---------|---------|----------|--------|-------------------|----------------------|
-add_cart|        3|        12|       4|75.0000000000000000|    4.0000000000000000|
-favorite|        1|         1|       4|25.0000000000000000|1.00000000000000000000|
-purchase|        3|         5|       4|75.0000000000000000|    1.6666666666666667|
-review  |        1|         1|       4|25.0000000000000000|1.00000000000000000000|
-view    |        1|         1|       4|25.0000000000000000|1.00000000000000000000|
+#### 코드 11-1 액션 수와 비율을 계산하는 쿼리
+
+	with
+	stats as(
+		-- 로그 전체의 유니크 사용자 수 구하기
+		-- 액션을 사용한 사용자 전체 (session 기준) 유저 2명 셰션 4
+		select count(distinct session1) as total_uu
+		from action_log 
+	)
+	select 
+		action 
+		-- 액션 uu 해당액션의 실 사용자수
+		,count(distinct session1) as action_uu
+		-- 액션의 수 전체의 액션수 
+		,count(1) as action_log 
+		-- 사용자 전체 uu	
+		,s.total_uu
+		-- 사용률 = 사용자 액션 uu / 전체 uu
+		-- 액션이 4개인데 
+		,100.0 * count(distinct session1)/s.total_uu as usage_rate
+		-- 1인당 액션수: 전체 액션수 / 사용자 액션 uu
+		-- 전체가 12개 인데 3명이 액션을 취했다면 1명이 대충 4번은 눌렀다는 소리네  
+		,1.0 * count(1) / count(distinct session1) as count_per_user
+	from action_log, stats as s  	
+	group by action, s.total_uu
 
 
+	action  |action_uu|action_log|total_uu|usage_rate         |count_per_user        |
+	--------|---------|----------|--------|-------------------|----------------------|
+	add_cart|        3|        12|       4|75.0000000000000000|    4.0000000000000000|
+	favorite|        1|         1|       4|25.0000000000000000|1.00000000000000000000|
+	purchase|        3|         5|       4|75.0000000000000000|    1.6666666666666667|
+	review  |        1|         1|       4|25.0000000000000000|1.00000000000000000000|
+	view    |        1|         1|       4|25.0000000000000000|1.00000000000000000000|
+
+	* 책 이랑 샘플데이터가 다르다.
 
 
 
@@ -125,11 +126,406 @@ view    |        1|         1|       4|25.0000000000000000|1.0000000000000000000
 
 ### 로그인 사용자와 비로그인 사용자를 구분해서 집계하기
 
-비로그인이 가능한 경우 따로 집계하는것이 좋다.
-서비스 충성도가 높은 고객과 낮은 고객의 경향을 알수 있다.
+	비로그인이 가능한 경우 따로 집계하는것이 좋다.
+	서비스 충성도가 높은 고객과 낮은 고객의 경향을 알수 있다.
+
+	*우선 샘플 데이터가 다르다. 
+
+
+
+
+#### 코드 11-2 로그인 상태를 판별하는 쿼리
+
+
+
+
+	아이디 값에 유무로 비로그인을 구분한다고 가정시 
+	coalesce 함수를 이용하여 구분
+
+	with
+	action_log_with_status as (
+	select 
+		session1 ,user_id ,"action" 
+		,case 
+			when coalesce(user_id ,'') <> '' -- != coalesce null이 아니면 1 null이면 2 
+			then 'login' else 'end' end as login_status
+	from public.action_log
+	)
+	select * from action_log_with_status ;
+
+	* coalesce(1,2) = null이 아니면 1 null이면 2 반환하는 함수 
+	* <> === !=
+
+
+
+
+	session1|user_id|action  |login_status|
+	--------|-------|--------|------------|
+	989004ea|U001   |purchase|login       |
+	989004ea|U001   |view    |login       |
+	989004ea|U001   |favorite|login       |
+	989004ea|U001   |review  |login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |add_cart|login       |
+	989004ea|U001   |purchase|login       |
+	47db0370|U002   |add_cart|login       |
+	47db0370|U002   |purchase|login       |
+	47db0370|U002   |add_cart|login       |
+	87b5725f|U001   |add_cart|login       |
+	87b5725f|U001   |add_cart|login       |
+	87b5725f|U001   |add_cart|login       |
+	9afaf87c|U002   |purchase|login       |
+	9afaf87c|U001   |purchase|login       |
+
+
+
+
+#### 코드 11-3 로그인 상태에 따라 액션 수 등을 따로 집계하는 쿼리 
+
+
+
+	with
+	action_log_with_status as (
+	select 
+		session1 ,user_id ,action
+		,case 
+			when coalesce(user_id ,'') <> '' -- != coalesce null이 아니면 1 null이면 2 
+			then 'login' else 'end' end as login_status
+	from public.action_log
+	)
+	select 
+		coalesce(action ,'all') as action12
+		,coalesce(login_status ,'all') as login_status
+		,count(distinct session1) as action_uu
+		,count(1) as action_count
+	from action_log_with_status
+	group by 
+	rollup(action, login_status)
+
+	action_uu - 액션을 취한 사용자의 수 
+	action_count - 모든 액션의 수 
+
+	login + guest = all이 아닌 session 기반 집계 
+
+	action12|login_status|action_uu|action_count|
+	--------|------------|---------|------------|
+	add_cart|login       |        3|          12|
+	add_cart|            |        3|          12|
+	favorite|login       |        1|           1|
+	favorite|            |        1|           1|
+	purchase|login       |        3|           5|
+	purchase|            |        3|           5|
+	review  |login       |        1|           1|
+	review  |            |        1|           1|
+	view    |login       |        1|           1|
+	view    |            |        1|           1|
+	all     |            |        4|          20|
 
 
 
 
 
 
+### 회원과 비회원을 구분해서 집계하기
+
+
+
+
+	아이디 로그인 -> 회원
+	아이디 없음 -> 비회원 
+	비회원중 이전에 한번이라도 로그인을 한 경우 -> 회원
+
+
+
+
+#### 코드 11-4 회원상태를 판별하는 쿼리
+
+
+
+
+	with
+	action_log_with_status as (
+	select 
+		session1 ,user_id ,action
+		,case 
+			when 
+				coalesce(
+					max(user_id) 
+					over(
+						partition by session1
+							order by stamp 
+								rows between unbounded preceding 
+									and current row
+					)
+				) <> ''
+				then 'member'
+			else 'none'
+		end as member_status
+		, stamp 
+	from public.action_log
+	)
+	select 
+		*
+	from action_log_with_status
+
+	한번이라도 로그인 했다면 max(user_id)로 알수 있다
+	참고롤 로그인하기 이전의 상태를 비회원으로 하고싶다면 order by stamp를 사용하면 된다.
+
+	session1|user_id|action  |member_status|stamp              |
+	--------|-------|--------|-------------|-------------------|
+	47db0370|U002   |add_cart|member       |2016-11-03 19:00:00|
+	47db0370|U002   |purchase|member       |2016-11-03 20:00:00|
+	47db0370|U002   |add_cart|member       |2016-11-03 20:30:00|
+	87b5725f|U001   |add_cart|member       |2016-11-04 12:00:00|
+	87b5725f|U001   |add_cart|member       |2016-11-04 12:00:00|
+	87b5725f|U001   |add_cart|member       |2016-11-04 12:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:00:00|
+	989004ea|U001   |favorite|member       |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:00:00|
+	989004ea|U001   |view    |member       |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:00:00|
+	989004ea|U001   |review  |member       |2016-11-03 18:00:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:01:00|
+	989004ea|U001   |add_cart|member       |2016-11-03 18:02:00|
+	989004ea|U001   |purchase|member       |2016-11-03 18:10:00|
+	989004ea|U001   |purchase|member       |2016-11-03 18:10:00|
+	9afaf87c|U002   |purchase|member       |2016-11-04 13:00:00|
+	9afaf87c|U001   |purchase|member       |2016-11-04 15:00:00|
+
+
+
+	비어있는 함수 구분
+	coalesce 
+	nullif 함수
+
+
+
+
+
+## 2. 연령별 구분 집계하기 
+
+	회원 정보를 저장하는 서비스는 
+		사용자 파악 
+		의도에 맞는 사용이 되고 있는지 확인 
+
+	사용자 속성을 정의 하면 다양한 리포트를 만들수 있다.
+
+	시청률 분석에서 많이 사용하는 연령별 구분을 집계하는 방법을 알아보자.
+
+	생일 기반으로 속성을 저장한다.
+
+
+	select * from mst_users 
+
+	user_id|sex|birth_date|register_date|register_device|withdraw_date|
+	-------|---|----------|-------------|---------------|-------------|
+	U001   |M  |1977-06-17|2016-10-01   |             pc|             |
+	U002   |F  |1953-06-12|2016-10-01   |             sp|2016-10-10   |
+	U003   |M  |1965-01-06|2016-10-01   |             pc|             |
+	U004   |F  |1954-05-21|2016-10-05   |             pc|             |
+	U005   |M  |1987-11-23|2016-10-05   |             sp|             |
+	U006   |F  |1950-01-21|2016-10-10   |             pc|2016-10-10   |
+	U007   |F  |1950-07-18|2016-10-10   |            app|             |
+	U008   |F  |2006-12-09|2016-10-10   |             sp|             |
+	U009   |M  |2004-10-23|2016-10-15   |             pc|             |
+	U010   |F  |1987-03-18|2016-10-16   |             pc|             |
+
+
+
+#### 코드 11-5 사용자의 생일을 계산하는 쿼리
+
+
+	with
+		mst_user_with_int_birth_date as (
+		select *
+			, 20201018 as int_specific_date
+			, cast(replace(substring(birth_date,1,10),'-','') as integer) as int_birth_date
+		from mst_users 
+		), mst_user_with_age as(
+		select
+		*
+		, floor((int_specific_date - int_birth_date)/10000)as age
+		from mst_user_with_int_birth_date
+		)
+		select 
+			user_id 
+			,sex
+			,birth_date
+			,age
+		from mst_user_with_age
+
+	* cast = FLOAT,또는 NUMBERIC에서 INTEGER로 변환할때 CAST()함수는 결과를 자릅니다.
+
+	user_id|sex|birth_date|age|
+	-------|---|----------|---|
+	U001   |M  |1977-06-17| 43|
+	U002   |F  |1953-06-12| 67|
+	U003   |M  |1965-01-06| 55|
+	U004   |F  |1954-05-21| 66|
+	U005   |M  |1987-11-23| 32|
+	U006   |F  |1950-01-21| 70|
+	U007   |F  |1950-07-18| 70|
+	U008   |F  |2006-12-09| 13|
+	U009   |M  |2004-10-23| 15|
+	U010   |F  |1987-03-18| 33|
+
+
+#### 코드 11-6 성별과 연령으로 연령별 구분을 계산하는 쿼리
+
+
+	with
+	mst_user_with_int_birth_date as (
+	select *
+		, 20201018 as int_specific_date
+		, cast(replace(substring(birth_date,1,10),'-','') as integer) as int_birth_date
+	from mst_users 
+	), mst_user_with_age as(
+	select
+	*
+	, floor((int_specific_date - int_birth_date)/10000)as age
+	from mst_user_with_int_birth_date
+	), mst_users_with_category as(
+	select 
+		user_id
+		,sex
+		,age
+		,concat(
+			case
+				when 20 <= age then sex
+				else ''
+			end
+			,case
+				when age between 4 and 12 then '12'
+				when age between 13 and 19 then '19'
+				when age between 20 and 34 then '34'
+				when age between 35 and 49 then '49'
+				when age >= 50 then '3'
+			end
+		) as category 
+	from mst_user_with_age
+	)
+	select 
+		*
+	from mst_users_with_category
+
+
+
+	user_id|sex|age|category|
+	-------|---|---|--------|
+	U001   |M  | 43|M2      |
+	U002   |F  | 67|F3      |
+	U003   |M  | 55|M3      |
+	U004   |F  | 66|F3      |
+	U005   |M  | 32|M1      |
+	U006   |F  | 70|F3      |
+	U007   |F  | 70|F3      |
+	U008   |F  | 13|t       |
+	U009   |M  | 15|t       |
+	U010   |F  | 33|F1      |
+
+	with
+	mst_user_with_int_birth_date as (
+	select *
+		, 20201018 as int_specific_date
+		, cast(replace(substring(birth_date,1,10),'-','') as integer) as int_birth_date
+	from mst_users 
+	), mst_user_with_age as(
+	select
+	*
+	, floor((int_specific_date - int_birth_date)/10000)as age
+	from mst_user_with_int_birth_date
+	), mst_users_with_category as(
+	select 
+		user_id
+		,sex
+		,age
+		,concat(
+			case
+				when 20 <= age then sex
+				else ''
+			end
+			,case
+				when age between 4 and 12 then '12'
+				when age between 13 and 19 then '19'
+				when age between 20 and 34 then '34'
+				when age between 35 and 49 then '49'
+				when age >= 50 then '50'
+			end
+		) as category 
+	from mst_user_with_age
+	)
+	select 
+		category
+		,count(1) as user_count 
+	from mst_users_with_category
+	group by category 
+
+	category|user_count|
+	--------|----------|
+	M50     |         1|
+	M34     |         1|
+	F34     |         1|
+	19      |         2|
+	M49     |         1|
+	F50     |         4|
+
+
+	with
+	mst_user_with_int_birth_date as (
+	select *
+		, 20201018 as int_specific_date
+		, cast(replace(substring(birth_date,1,10),'-','') as integer) as int_birth_date
+	from mst_users 
+	), mst_user_with_age as(
+	select
+	*
+	, floor((int_specific_date - int_birth_date)/10000)as age
+	from mst_user_with_int_birth_date
+	), mst_users_with_category as(
+	select 
+		user_id
+		,sex
+		,age
+		,concat(
+			case
+				when 20 <= age then sex
+				else ''
+			end
+			,case
+				when age between 4 and 12 then '12'
+				when age between 13 and 19 then '19'
+				when age between 20 and 34 then '34'
+				when age between 35 and 49 then '49'
+				when age >= 50 then '50'
+			end
+		) as category 
+	from mst_user_with_age
+	)
+	select 
+		p.category as product_category
+		,u.category as user_category
+		,count(*) as purchase_count  
+	from
+		action_log as p
+		join
+		mst_users_with_category as u
+		on p.user_id = u.user_id
+	where 
+		p.action = 'purchase'
+	group by p.category, u.category
+	order by p.category, u.category
+
+	product_category|user_category|purchase_count|
+----------------|-------------|--------------|
+action          |M49          |             1|
+drama           |F50          |             2|
+drama           |M49          |             2|
+
+## 4. 사용자의 방문 빈도 집계하기
