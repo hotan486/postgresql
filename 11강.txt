@@ -379,6 +379,7 @@
 
 #### 코드 11-6 성별과 연령으로 연령별 구분을 계산하는 쿼리
 
+	- 생일을 계산한 결과로 연령별 구분 을 추가한 쿼리
 
 	with
 	mst_user_with_int_birth_date as (
@@ -406,7 +407,7 @@
 				when age between 13 and 19 then '19'
 				when age between 20 and 34 then '34'
 				when age between 35 and 49 then '49'
-				when age >= 50 then '3'
+				when age >= 50 then '50'
 			end
 		) as category 
 	from mst_user_with_age
@@ -417,18 +418,21 @@
 
 
 
-	user_id|sex|age|category|
-	-------|---|---|--------|
-	U001   |M  | 43|M2      |
-	U002   |F  | 67|F3      |
-	U003   |M  | 55|M3      |
-	U004   |F  | 66|F3      |
-	U005   |M  | 32|M1      |
-	U006   |F  | 70|F3      |
-	U007   |F  | 70|F3      |
-	U008   |F  | 13|t       |
-	U009   |M  | 15|t       |
-	U010   |F  | 33|F1      |
+	user_id|sex|age |category|
+	-------|---|----|--------|
+	U001   |M  |43.0|M49     |
+	U002   |F  |67.0|F50     |
+	U003   |M  |55.0|M50     |
+	U004   |F  |66.0|F50     |
+	U005   |M  |32.0|M34     |
+	U006   |F  |70.0|F50     |
+	U007   |F  |70.0|F50     |
+	U008   |F  |13.0|19      |
+	U009   |M  |15.0|19      |
+	U010   |F  |33.0|F34     |
+
+
+#### 코드 11-6 연령별 구분의 사람수를 계산하는 쿼리
 
 	with
 	mst_user_with_int_birth_date as (
@@ -476,6 +480,16 @@
 	M49     |         1|
 	F50     |         4|
 
+	- COUNT(컬럼) - NULL 값이 들어간 행은 카운트하지 않습니다.
+	- COUNT(*) - NULL 값에 상관없이 모든 행을 카운트합니다.
+	- count(1) - 즉, 구분이 되는 않는 연령은 집계하지 않겠다. 
+
+## 3. 연령별 구분의 특징 추출하기
+
+	서비스가 사용자 속성에 따라 다르다는것을 알게 되면 사용자의 속성에 맞는 상품을 추천이 가능하다
+	그러면 더 상품을 구매하거나 기사를 더 클릭하게 할수 있다.
+
+#### 코드 11-8 연령별 구분과 카타고리를 집계하는 쿼리
 
 	with
 	mst_user_with_int_birth_date as (
@@ -522,10 +536,115 @@
 	group by p.category, u.category
 	order by p.category, u.category
 
+	- 샘플 데이터상 구매 인원이 5명
+	select * from action_log where action = 'purchase'
+
+
 	product_category|user_category|purchase_count|
-----------------|-------------|--------------|
-action          |M49          |             1|
-drama           |F50          |             2|
-drama           |M49          |             2|
+	----------------|-------------|--------------|
+	action          |M49          |             1|
+	drama           |F50          |             2|
+	drama           |M49          |             2|
 
 ## 4. 사용자의 방문 빈도 집계하기
+
+	사용자의 한달 패턴을 분석하면 업무에 도움
+	예를 들어, 뉴스 사이트에 매일 오는 사용자와 일주일 한번오는 사용자의 패턴은 큰 차이가 있다
+
+
+#### 코드 11-9 한 주에 며칠 사용되었는지를 집계하는 쿼리
+
+	with
+		action_log_with_dt as (
+	select 
+		*
+		,substring(stamp, 1, 10) as dt 
+	from action_log
+	), action_day_count_per_user as(
+	select 
+		user_id 
+		,count(distinct dt) as action_day_count
+	from action_log_with_dt
+	where dt between '2016-11-01' and '2016-11-07'
+	group by user_id
+	)
+	select
+		action_day_count
+		,count(distinct user_id) as user_count 
+	from action_day_count_per_user
+	group by action_day_count
+	order by action_day_count
+
+	action_day_count|user_count|
+	----------------|----------|
+                   2|         2|
+
+
+	- 해당 일주일에 방문한 사용자
+	- 우선 확인 해야 하는 쿼리
+
+	with
+		action_log_with_dt as (
+	select 
+		*
+		,substring(stamp, 1, 10) as dt 
+	from action_log
+	)
+	select 
+		user_id 
+		,count(distinct dt) as action_day_count
+	from action_log_with_dt
+	where dt between '2016-11-01' and '2016-11-07' -- 해당 일주일에 방문한 사용자
+	group by user_id
+
+	user_id|action_day_count|
+	-------|----------------|
+	U001   |               2|
+	U002   |               2|
+
+	- 2명이 2번 방문함 
+	- 그러므로 2번 방문한 사람은 2명 
+	- 지금 카운터별로 그룹 지음 
+
+
+#### 코드 11-10 구성비와 구성비누계를 계산하는 쿼리
+
+	with
+		action_log_with_dt as (
+	select 
+		*
+		,substring(stamp, 1, 10) as dt 
+	from action_log
+	), action_day_count_per_user as(
+	select 
+		user_id 
+		,count(distinct dt) as action_day_count
+	from action_log_with_dt
+	where dt between '2016-11-01' and '2016-11-07'
+	group by user_id
+	)
+	select
+		action_day_count 
+		,count(distinct user_id) as user_count
+		,sum(count(distinct user_id)) 
+			over()
+			-- 구성비 100.0 * 일주일중 해당 n번 사용자 / 일주일중 총 사용자
+		,100.0 *
+			count(distinct user_id)
+			/ sum(count(distinct user_id)) 
+			over() as composition_ratio 
+			-- 구성비 100.0 * 일주일중 해당 n번 사용자 / 일주일중 총 사용자
+			-- 처음부터 현재 행까지 이니깐 각 행까지의 누계 
+		,100.0 *
+			count(distinct user_id)
+			/ sum(count(distinct user_id)) 
+			over(order by action_day_count
+				rows between unbounded preceding and current row) as cumlative_ratio 
+	from action_day_count_per_user
+	group by action_day_count
+	order by action_day_count
+
+
+	action_day_count|user_count|composition_ratio   |cumlative_ratio     |
+	----------------|----------|--------------------|--------------------|
+    	           2|         2|100.0000000000000000|100.0000000000000000|
